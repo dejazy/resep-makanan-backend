@@ -39,4 +39,15 @@ class CategoryController extends Controller
         $categories = Category::all();
         return $this->successResponse($categories);
     }
+
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'name' => ['required']
+        ]);
+
+        $update = $category->update($validated);
+
+        return $this->successResponse($update);
+    }
 }

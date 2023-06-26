@@ -13,9 +13,6 @@ class CategoryControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * A basic feature test example.
-     */
     public function test_create_category(): void
     {
         $response = $this->post('/api/categories', [
@@ -53,5 +50,19 @@ class CategoryControllerTest extends TestCase
 
         $response = $this->get('/api/categories');
         $response->assertJsonCount(0, 'data');
+    }
+
+    public function test_update_category(): void
+    {
+        $category = Category::factory()->create();
+        $response = $this->put('/api/categories/' . $category->id, [
+            'name' => 'Second Course'
+        ]);
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Second Course'
+        ]);
+
+        $response->assertStatus(200);
     }
 }

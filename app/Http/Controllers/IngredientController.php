@@ -39,4 +39,15 @@ class IngredientController extends Controller
         $ingredients = Ingredient::all();
         return $this->successResponse($ingredients);
     }
+
+    public function update(Request $request, Ingredient $ingredient)
+    {
+        $validated = $request->validate([
+            'name' => ['required']
+        ]);
+
+        $update = $ingredient->update($validated);
+
+        return $this->successResponse($update);
+    }
 }

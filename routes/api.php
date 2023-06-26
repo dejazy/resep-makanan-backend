@@ -21,12 +21,14 @@ Route::prefix('categories')->group(function() {
     Route::get('/', [CategoryController::class, 'list']);
     Route::post('/', [CategoryController::class, 'store']);
     Route::delete('/{category}', [CategoryController::class, 'delete']);
+    Route::put('/{category}', [CategoryController::class, 'update']);
 });
 
 Route::prefix('ingredients')->group(function() {
     Route::get('/', [IngredientController::class, 'list']);
     Route::post('/', [IngredientController::class, 'store']);
     Route::delete('{ingredient}', [IngredientController::class, 'delete']);
+    Route::put('{ingredient}', [IngredientController::class, 'update']);
 });
 
 Route::prefix('recipes')->group(function() {
