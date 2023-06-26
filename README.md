@@ -16,23 +16,19 @@ php artisan key:generate
 ```
 ### 4. [RUN] SYMLINK STORAGE
 ```
-php artisan key:generate
+php artisan storage:link
 ```
 ### 5. SETTING DATABASE (PGSQL) && SET ENV
 
-### 6. [RUN] TESTING
-
-```
-php artisan test
-```
-### 7. [RUN] MIGRATE DATABASE
+### 6. [RUN] MIGRATE DATABASE
 
 ```
 php artisan migrate
 ```
-### 8. [RUN] STORAGE LINK
+### 7. [RUN] TESTING
+
 ```
-php artisan storage:link
+php artisan test
 ```
 ### 8. [RUN] SERVE
 ```
