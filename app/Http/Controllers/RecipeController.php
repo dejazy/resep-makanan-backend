@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Recipe;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class RecipeController extends Controller
@@ -38,8 +39,15 @@ class RecipeController extends Controller
 
     public function delete(Recipe $recipe)
     {
-        $delete = $recipe->delete();
-
+        DB::beginTransaction();
+        try {
+            $recipe->ingredients()->sync([]);
+            $delete = $recipe->delete();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse($e->getMessage(), 422);
+        }
+        DB::commit();
         return $this->successResponse($delete);
     }
 
@@ -51,7 +59,7 @@ class RecipeController extends Controller
             'time' => ['required'],
             'portion' => ['required'],
             'description' => ['required'],
-            'photo' => ['image'],
+            // 'photo' => ['image'],
             'steps' => ['required', 'array'],
             'ingredients' => ['required', 'array'],
             'ingredients.*.id' => ['required', 'exists:ingredients,id'],
@@ -74,24 +82,34 @@ class RecipeController extends Controller
 
     public function get(Recipe $recipe)
     {
+        $recipe->load(['ingredients', 'category']);
         return $this->successResponse($recipe);
     }
 
     public function list(Request $request)
     {
         $request->validate([
+            'search' => [],
             'category_id' => [],
             'ingredients' => ['array'],
         ]);
 
-        $recipes = Recipe::query();
+        $recipes = Recipe::query()->with(['category', 'ingredients']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $recipes = $recipes->where('name', 'like', "%$search%");
+        }
 
         if ($request->filled('category_id'))
             $recipes = $recipes->where('category_id', $request->input('category_id'));
 
         if ($request->filled('ingredients')) {
             foreach ($request->input('ingredients') as $ingredient) {
-                $recipes = $recipes->whereRelation('recipes', 'id', $ingredient);
+                $recipes = $recipes->whereRelation('ingredients', 'ingredients.id', $ingredient);
+                // $recipes = $recipes->whereHas('ingredients', function ($query) use ($ingredient) {
+                //     $query->where('ingredients.id', $ingredient);
+                // });
             }
         }
 

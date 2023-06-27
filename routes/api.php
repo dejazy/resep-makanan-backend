@@ -34,7 +34,7 @@ Route::prefix('ingredients')->group(function() {
 Route::prefix('recipes')->group(function() {
     Route::get('/', [RecipeController::class, 'list']);
     Route::post('/', [RecipeController::class, 'store']);
+    Route::post('update/{recipe}', [RecipeController::class, 'update']);
     Route::get('{recipe}', [RecipeController::class, 'get']);
-    Route::put('{recipe}', [RecipeController::class, 'update']);
     Route::delete('{recipe}', [RecipeController::class, 'delete']);
 });
